@@ -74,15 +74,16 @@ export default {
                     900: '#9F1239'
                 },
                 romantic: {
-                    100: '#F5F3FF',
-                    200: '#EDE9FE',
-                    300: '#DDD6FE',
-                    400: '#C4B5FD',
-                    500: '#A78BFA',
-                    600: '#8B5CF6',
-                    700: '#7C3AED',
-                    800: '#6D28D9',
-                    900: '#5B21B6'
+                    50: '#FFF1F2',   // Lightest shade
+                    100: '#FFE4E6',
+                    200: '#FECDD3',
+                    300: '#FDA4AF',
+                    400: '#FB7185',
+                    500: '#F43F5E',  // Base color
+                    600: '#E11D48',
+                    700: '#BE123C',
+                    800: '#9F1239',
+                    900: '#881337',  // Darkest shade
                 }
 			},
 			borderRadius: {

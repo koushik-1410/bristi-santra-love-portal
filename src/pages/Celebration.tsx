@@ -1,17 +1,19 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { HeartIcon, VolumeIcon, Volume2Icon } from "lucide-react";
 import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const Celebration: React.FC = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hearts, setHearts] = useState<Array<{ id: number; style: React.CSSProperties }>>([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioLoaded, setAudioLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { toast } = useToast();
 
   // Custom messages - replace these with your personalized messages
   const loveMessages = [
@@ -58,6 +60,34 @@ const Celebration: React.FC = () => {
       setHearts(prev => prev.filter(heart => heart.id !== id));
     }, animationDuration * 1000);
   };
+
+  // Setup audio element
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5;
+      audioRef.current.load();
+      
+      audioRef.current.oncanplaythrough = () => {
+        setAudioLoaded(true);
+        console.log("Audio loaded and ready to play");
+      };
+      
+      audioRef.current.onerror = (e) => {
+        console.error("Audio error:", e);
+        toast({
+          title: "Couldn't load music",
+          description: "Please try clicking the play button manually",
+          variant: "destructive"
+        });
+      };
+    }
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, [toast]);
 
   // Animate entrance
   useEffect(() => {
@@ -116,28 +146,58 @@ const Celebration: React.FC = () => {
     );
   };
 
+  // Try to play audio when message is shown
   useEffect(() => {
-    if (showMessage && audioRef.current) {
-      audioRef.current.volume = 0.5;
-      
+    if (showMessage && audioLoaded && audioRef.current) {
       // Set audio to start at 20 seconds
       audioRef.current.currentTime = 20;
       
-      audioRef.current.play().catch(error => {
-        console.log('Audio autoplay failed:', error);
-      });
-      setIsPlaying(true);
+      // Try to play the audio after a brief delay
+      const playPromise = setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play()
+            .then(() => {
+              setIsPlaying(true);
+              console.log("Audio playing successfully");
+            })
+            .catch(error => {
+              console.log('Audio autoplay failed:', error);
+              toast({
+                title: "Click to play music",
+                description: "Browser blocked autoplay. Please click the speaker icon.",
+                variant: "default"
+              });
+            });
+        }
+      }, 1000);
+      
+      return () => clearTimeout(playPromise);
     }
-  }, [showMessage]);
+  }, [showMessage, audioLoaded, toast]);
 
   const toggleAudio = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play();
+        // Set position to 20 seconds if starting from beginning
+        if (audioRef.current.currentTime < 1) {
+          audioRef.current.currentTime = 20;
+        }
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(error => {
+            console.log('Manual play failed:', error);
+            toast({
+              title: "Couldn't play audio",
+              description: "There was an issue playing the audio",
+              variant: "destructive"
+            });
+          });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -150,7 +210,7 @@ const Celebration: React.FC = () => {
       }}
     >
       {/* Audio element */}
-      <audio ref={audioRef} loop>
+      <audio ref={audioRef} loop preload="auto">
         <source src="/your-audio-file.mp3" type="audio/mp3" />
       </audio>
 
@@ -163,14 +223,14 @@ const Celebration: React.FC = () => {
         {isPlaying ? (
           <Volume2Icon className="h-6 w-6 text-love-500" />
         ) : (
-          <VolumeIcon className="h-6 w-6 text-love-500" />
+          <VolumeIcon className="h-6 w-6 text-love-500 animate-pulse" />
         )}
       </button>
 
       {/* Floating hearts background animation */}
       {hearts.map(heart => (
         <div 
-          key={heart.id} 
+          key={`heart-${heart.id}`}
           className="floating-heart absolute animate-float" 
           style={heart.style}
         >
@@ -193,7 +253,7 @@ const Celebration: React.FC = () => {
           <div className="min-h-[200px] flex items-center justify-center">
             {loveMessages.map((message, index) => (
               <p 
-                key={index}
+                key={`message-${index}`}
                 className={`absolute font-dancing text-2xl md:text-3xl text-romantic-800 transition-all duration-700 transform ${
                   index === currentSlide 
                     ? 'opacity-100 translate-y-0' 
@@ -209,7 +269,7 @@ const Celebration: React.FC = () => {
           <div className="flex justify-center space-x-2">
             {loveMessages.map((_, index) => (
               <button
-                key={index}
+                key={`dot-${index}`}
                 className={`h-3 w-3 rounded-full transition-all duration-300 ${
                   index === currentSlide ? 'bg-love-600 scale-125' : 'bg-romantic-300'
                 }`}

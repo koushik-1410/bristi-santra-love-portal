@@ -1,84 +1,78 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 280 60% 98%;
+    --foreground: 286 30% 26%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 286 30% 26%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 286 30% 26%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 286 50% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 300 60% 95%;
+    --secondary-foreground: 286 30% 26%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 286 10% 90%;
+    --muted-foreground: 286 20% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 350 80% 80%;
+    --accent-foreground: 286 30% 26%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 286 30% 90%;
+    --input: 286 30% 90%;
+    --ring: 286 50% 50%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 286 30% 10%;
+    --foreground: 286 30% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 286 30% 12%;
+    --card-foreground: 286 30% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 286 30% 12%;
+    --popover-foreground: 286 30% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 286 50% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 286 30% 20%;
+    --secondary-foreground: 286 30% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 286 30% 20%;
+    --muted-foreground: 286 20% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 350 80% 60%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 286 30% 30%;
+    --input: 286 30% 30%;
+    --ring: 286 50% 50%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -97,5 +91,43 @@
 
   body {
     @apply bg-background text-foreground;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50,30 Q60,20 70,30 T90,30 Q100,40 90,50 T90,70 Q80,80 70,70 T50,70 Q40,80 30,70 T10,70 Q0,60 10,50 T10,30 Q20,20 30,30 T50,30' fill='%23fbcfe8' fill-opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 150px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .love-card {
+    @apply relative overflow-hidden rounded-xl border border-romantic-200 bg-white p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:border-romantic-300;
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .love-input {
+    @apply block w-full rounded-md border-romantic-200 bg-white/70 px-4 py-3 text-gray-800 focus:border-romantic-400 focus:ring-romantic-400;
+  }
+
+  .love-btn {
+    @apply inline-flex items-center justify-center rounded-md bg-gradient-to-r from-romantic-600 to-love-600 px-6 py-3 font-medium text-white shadow-md transition-all duration-300 hover:from-romantic-700 hover:to-love-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-romantic-500 focus:ring-offset-2;
+  }
+
+  .love-btn-alt {
+    @apply inline-flex items-center justify-center rounded-md border border-romantic-200 bg-white px-6 py-3 font-medium text-romantic-700 shadow-sm transition-all duration-300 hover:bg-romantic-50 hover:text-romantic-800 focus:outline-none focus:ring-2 focus:ring-romantic-500 focus:ring-offset-2;
+  }
+
+  .floating-heart {
+    @apply absolute animate-float text-love-500 opacity-80;
+  }
+  
+  .font-dancing {
+    font-family: 'Dancing Script', cursive;
+  }
+  
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
   }
 }

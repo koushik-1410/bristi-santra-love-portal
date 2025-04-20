@@ -3,9 +3,6 @@ import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -16,27 +13,37 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { useFloatingHearts } from "@/hooks/useFloatingHearts";
 import FloatingHearts from "./FloatingHearts";
 import FormHeader from "./FormHeader";
+import DateSelector from "./DateSelector";
 
 const FormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  dob: z.date({ required_error: "Date of birth is required." }),
+  day: z.string().min(1, { message: "Day is required" }),
+  month: z.string().min(1, { message: "Month is required" }),
+  year: z.string().min(1, { message: "Year is required" }),
+}).refine((data) => {
+  try {
+    // Check if the date is valid
+    const date = new Date(parseInt(data.year), parseInt(data.month) - 1, parseInt(data.day));
+    return date.getDate() === parseInt(data.day) && 
+           date.getMonth() === parseInt(data.month) - 1 && 
+           date.getFullYear() === parseInt(data.year);
+  } catch {
+    return false;
+  }
+}, {
+  message: "Please enter a valid date",
+  path: ["day"], // Show error on the day field
 });
 
 type FormValues = z.infer<typeof FormSchema>;
 
 interface SignupFormProps {
-  onSuccess: (values: FormValues & { isSpecial: boolean }) => void;
+  onSuccess: (values: FormValues & { isSpecial: boolean; dob: Date }) => void;
 }
 
 const specialNames = ["bristi santra", "rimi"];
@@ -50,6 +57,9 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     defaultValues: {
       name: "",
       email: "",
+      day: "",
+      month: "",
+      year: "",
     },
   });
 
@@ -76,7 +86,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
       });
     }
 
-    onSuccess({ ...values, isSpecial });
+    // Convert the separate date values to a Date object
+    const dob = new Date(
+      parseInt(values.year),
+      parseInt(values.month) - 1,
+      parseInt(values.day)
+    );
+
+    onSuccess({ ...values, isSpecial, dob });
   };
 
   return (
@@ -134,45 +151,31 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
               )}
             />
             
-            <FormField
-              control={form.control}
-              name="dob"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-romantic-700">Date of Birth</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
+            <FormItem className="space-y-2">
+              <FormLabel className="text-romantic-700">Date of Birth</FormLabel>
+              <div className="flex flex-row space-x-2">
+                <FormField
+                  control={form.control}
+                  name="day"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
                       <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "love-input w-full pl-3 text-left font-normal flex justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                          onFocus={() => addFloatingHeart()}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Select your date of birth</span>
-                          )}
-                          <CalendarIcon className="h-4 w-4 opacity-70" />
-                        </Button>
+                        <DateSelector
+                          day={field.value}
+                          month={form.watch("month")}
+                          year={form.watch("year")}
+                          onDayChange={field.onChange}
+                          onMonthChange={(value) => form.setValue("month", value)}
+                          onYearChange={(value) => form.setValue("year", value)}
+                          addFloatingHeart={addFloatingHeart}
+                        />
                       </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </FormItem>
             
             <Button 
               type="submit" 

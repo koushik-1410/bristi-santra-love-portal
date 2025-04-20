@@ -1,36 +1,34 @@
 
-import { useState } from "react";
+import { useState } from 'react';
 
-interface FloatingHeart {
-  id: number;
-  style: React.CSSProperties;
-}
+export type addFloatingHeartType = () => void;
 
 export const useFloatingHearts = () => {
-  const [hearts, setHearts] = useState<FloatingHeart[]>([]);
+  const [hearts, setHearts] = useState<Array<{ id: number; style: React.CSSProperties }>>([]);
 
   const addFloatingHeart = () => {
     const id = Date.now();
+    const size = 20 + Math.random() * 30;
+    const duration = 3 + Math.random() * 3;
     const left = Math.random() * 100;
-    const delay = Math.random() * 2;
-    const size = 20 + Math.random() * 20;
     
-    const style = {
-      left: `${left}%`,
-      animationDelay: `${delay}s`,
-      fontSize: `${size}px`,
-      top: '100%'
+    const newHeart = {
+      id,
+      style: {
+        fontSize: `${size}px`,
+        left: `${left}%`,
+        animationDuration: `${duration}s`,
+        top: '100%'
+      }
     };
-
-    setHearts(prev => [...prev, { id, style }]);
     
+    setHearts(prevHearts => [...prevHearts, newHeart]);
+    
+    // Remove heart after animation completes
     setTimeout(() => {
-      setHearts(prev => prev.filter(heart => heart.id !== id));
-    }, 5000);
+      setHearts(prevHearts => prevHearts.filter(heart => heart.id !== id));
+    }, duration * 1000);
   };
 
-  return {
-    hearts,
-    addFloatingHeart
-  };
+  return { hearts, addFloatingHeart };
 };

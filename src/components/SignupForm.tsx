@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, EyeIcon, EyeOffIcon, HeartIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -22,6 +23,9 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
+import { useFloatingHearts } from "@/hooks/useFloatingHearts";
+import FloatingHearts from "./FloatingHearts";
+import FormHeader from "./FormHeader";
 
 const FormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -39,6 +43,7 @@ const specialNames = ["bristi santra", "rimi"];
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
   const { toast } = useToast();
+  const { hearts, addFloatingHeart } = useFloatingHearts();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -48,42 +53,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     },
   });
 
-  const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; style: React.CSSProperties }>>([]);
-
-  const addFloatingHeart = () => {
-    const id = Date.now();
-    const left = Math.random() * 100;
-    const animationDuration = 3 + Math.random() * 4;
-    const delay = Math.random() * 0.5;
-    const size = 20 + Math.random() * 20;
-    
-    const style = {
-      left: `${left}%`,
-      fontSize: `${size}px`,
-      animationDuration: `${animationDuration}s`,
-      animationDelay: `${delay}s`,
-      top: '100%',
-    };
-
-    setFloatingHearts(prev => [...prev, { id, style }]);
-    
-    // Clean up after animation completes
-    setTimeout(() => {
-      setFloatingHearts(prev => prev.filter(heart => heart.id !== id));
-    }, (animationDuration + delay) * 1000);
-  };
-
   const onSubmit = (values: FormValues) => {
-    // Check if the name matches any special name (case-insensitive)
     const isSpecial = specialNames.includes(values.name.toLowerCase());
     
-    // Add some floating hearts for everyone (but we'll add more for special user)
     for (let i = 0; i < 5; i++) {
       setTimeout(() => addFloatingHeart(), i * 200);
     }
     
     if (isSpecial) {
-      // Add extra hearts for the special person
       for (let i = 0; i < 10; i++) {
         setTimeout(() => addFloatingHeart(), i * 100);
       }
@@ -99,30 +76,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
       });
     }
 
-    // Pass the form values and special flag to the parent component
     onSuccess({ ...values, isSpecial });
   };
 
   return (
     <div className="relative overflow-hidden">
-      {/* Animated floating hearts */}
-      {floatingHearts.map(heart => (
-        <div 
-          key={heart.id} 
-          className="floating-heart absolute animate-float" 
-          style={heart.style}
-        >
-          ❤️
-        </div>
-      ))}
+      <FloatingHearts hearts={hearts} />
       
       <div 
         className="love-card animate-fade-in w-full max-w-md mx-auto"
         onMouseEnter={() => addFloatingHeart()} 
       >
-        <div className="absolute -top-2 -right-2 bg-love-100 rounded-full p-2">
-          <HeartIcon className="h-6 w-6 text-love-500 animate-heartbeat" />
-        </div>
+        <FormHeader />
         
         <h2 className="text-2xl font-bold mb-6 text-center text-romantic-800">
           Sign up

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { HeartIcon, VolumeIcon, Volume2Icon } from "lucide-react";
@@ -118,6 +119,10 @@ const Celebration: React.FC = () => {
   useEffect(() => {
     if (showMessage && audioRef.current) {
       audioRef.current.volume = 0.5;
+      
+      // Set audio to start at 20 seconds
+      audioRef.current.currentTime = 20;
+      
       audioRef.current.play().catch(error => {
         console.log('Audio autoplay failed:', error);
       });

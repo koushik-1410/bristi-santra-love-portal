@@ -5,9 +5,8 @@ import Celebration from "@/pages/Celebration";
 import GenericMessage from "@/pages/GenericMessage";
 import { HeartIcon } from "lucide-react";
 
-// Core date to unlock the special message - modify this to your desired date in DDMMYYYY format
-// You can change this to any significant date in DDMMYYYY format
-const CORRECT_PASSWORD = "14022023"; // Example: Feb 14, 2023 - Valentine's Day
+// Updated core date to unlock the special message
+const CORRECT_PASSWORD = "15102024"; // The date you proposed her
 
 const Index = () => {
   const [stage, setStage] = useState<'signup' | 'password' | 'celebration' | 'generic'>('signup');

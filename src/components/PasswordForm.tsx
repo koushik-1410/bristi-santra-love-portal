@@ -63,13 +63,13 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onSuccess, onFail, correctP
     },
   });
 
-  // Add hint based on number of attempts
+  // Personalized hints for password entry
   const getHint = () => {
-    if (attempts === 0) return null;
-    if (attempts === 1) return "Hint: It's a special date for both of you...";
-    if (attempts === 2) return "Hint: Maybe when you first met?";
-    if (attempts === 3) return "Hint: Or another date that means a lot...";
-    return "Think of your most special moments together ❤️";
+    if (attempts === 0) return "Hint: The day I asked you to be mine ❤️";
+    if (attempts === 1) return "Hint: The date that changed everything...";
+    if (attempts === 2) return "DD/MM/YYYY format - when our story began";
+    if (attempts === 3) return "A special date that means the world to us";
+    return "Think of our most precious moment together ❤️";
   };
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
@@ -96,7 +96,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onSuccess, onFail, correctP
       
       toast({
         title: "Not quite right",
-        description: "Try a different special date in DDMMYYYY format",
+        description: "Try the date in DDMMYYYY format",
         variant: "destructive",
       });
       
@@ -136,7 +136,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onSuccess, onFail, correctP
         </h2>
         
         <p className="text-center text-romantic-600 mb-6">
-          Enter a special date in DDMMYYYY format to see your personal message ❤️
+          Enter the date that holds our special memory ❤️
         </p>
         
         <Form {...form}>
@@ -186,3 +186,4 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onSuccess, onFail, correctP
 };
 
 export default PasswordForm;
+

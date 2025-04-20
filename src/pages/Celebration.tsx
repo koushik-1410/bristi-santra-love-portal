@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { HeartIcon } from "lucide-react";
+import { HeartIcon, VolumeIcon, Volume2Icon } from "lucide-react";
 import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 
@@ -9,8 +8,10 @@ const Celebration: React.FC = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hearts, setHearts] = useState<Array<{ id: number; style: React.CSSProperties }>>([]);
+  const [isPlaying, setIsPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   // Custom messages - replace these with your personalized messages
   const loveMessages = [
     "Bristi, happy birthday my love! 💖",
@@ -114,6 +115,27 @@ const Celebration: React.FC = () => {
     );
   };
 
+  useEffect(() => {
+    if (showMessage && audioRef.current) {
+      audioRef.current.volume = 0.5;
+      audioRef.current.play().catch(error => {
+        console.log('Audio autoplay failed:', error);
+      });
+      setIsPlaying(true);
+    }
+  }, [showMessage]);
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -122,6 +144,24 @@ const Celebration: React.FC = () => {
         background: "linear-gradient(135deg, #F5F0FF 0%, #FFF1F2 100%)"
       }}
     >
+      {/* Audio element */}
+      <audio ref={audioRef} loop>
+        <source src="/your-audio-file.mp3" type="audio/mp3" />
+      </audio>
+
+      {/* Audio control button */}
+      <button
+        onClick={toggleAudio}
+        className="absolute top-4 right-4 p-2 rounded-full bg-love-100 hover:bg-love-200 transition-colors"
+        aria-label={isPlaying ? "Mute audio" : "Play audio"}
+      >
+        {isPlaying ? (
+          <Volume2Icon className="h-6 w-6 text-love-500" />
+        ) : (
+          <VolumeIcon className="h-6 w-6 text-love-500" />
+        )}
+      </button>
+
       {/* Floating hearts background animation */}
       {hearts.map(heart => (
         <div 
